@@ -106,4 +106,9 @@ export class DocumentRepository {
     }
     return result;
   }
+
+  async hasDocuments(): Promise<boolean> {
+    const row = await this.db.get<{ count: number }>("SELECT COUNT(1) as count FROM documents");
+    return (row?.count ?? 0) > 0;
+  }
 }

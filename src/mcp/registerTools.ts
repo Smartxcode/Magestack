@@ -113,6 +113,36 @@ export function registerCoreTools(
         };
       }
     );
+
+    const updateTools: Array<{ name: string; title: string; sources?: SourceId[] }> = [
+      { name: "mcp_update_all", title: "MCP update all" },
+      { name: "mcp_update_hyva", title: "MCP update Hyva", sources: ["hyva"] },
+      { name: "mcp_update_satoshi", title: "MCP update Satoshi", sources: ["satoshi"] },
+      { name: "mcp_update_mageos", title: "MCP update Mageos", sources: ["mageos"] }
+    ];
+
+    for (const tool of updateTools) {
+      server.registerTool(
+        tool.name,
+        {
+          title: tool.title,
+          description: "Trigger documentation refresh for the specified sources.",
+          inputSchema: {}
+        },
+        async () => {
+          const results = await options.triggerUpdate?.(tool.sources);
+          return {
+            content: [
+              {
+                type: "text" as const,
+                text: `${tool.title} finished. Results: ${JSON.stringify(results ?? [], null, 2)}`
+              }
+            ],
+            structuredContent: { results }
+          };
+        }
+      );
+    }
   }
 }
 

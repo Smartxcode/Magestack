@@ -5,7 +5,7 @@ import { initDb } from "./db/client.js";
 import { DocumentRepository } from "./db/repository.js";
 import { config } from "./config.js";
 import { registerCoreTools, registerTopicTools } from "./mcp/registerTools.js";
-import { runIndexers } from "./indexers/index.js";
+import { runIndexers, ProgressReporter } from "./indexers/index.js";
 import { SourceId } from "./types.js";
 import { logger } from "./utils/logger.js";
 
@@ -15,12 +15,14 @@ export interface StartServerOptions {
   enableCron?: boolean;
   cronExpression?: string;
   initialSources?: SourceId[];
+  reporter?: ProgressReporter;
 }
 
 export async function startServer(options: StartServerOptions = {}) {
   const dbPath = options.dbPath ?? config.dbPath;
   const db = await initDb(dbPath);
   const repo = new DocumentRepository(db);
+  const sourceSelection = options.initialSources ?? config.allowedSources;
 
   const server = new McpServer(
     {
@@ -38,14 +40,38 @@ export async function startServer(options: StartServerOptions = {}) {
 
   const triggerUpdate = async (sources?: SourceId[]) => {
     logger.info("Manual update requested", { sources });
-    return runIndexers(repo, { sources });
+    return runIndexers(repo, { sources: sources ?? sourceSelection }, options.reporter);
   };
 
   registerCoreTools(server, repo, { triggerUpdate });
   registerTopicTools(server, repo);
 
-  if (options.updateOnStart ?? process.env.MCP_DOCS_UPDATE_ON_START === "true") {
-    await triggerUpdate(options.initialSources);
+  const forceBootstrap = options.updateOnStart ?? process.env.MCP_DOCS_UPDATE_ON_START === "true";
+  const shouldBootstrap = forceBootstrap || !(await repo.hasDocuments());
+  if (shouldBootstrap) {
+    logger.info("Bootstrapping documentation index", {
+      reason: forceBootstrap ? "forced" : "empty-database",
+      sources: sourceSelection
+    });
+    const bootstrapResults = await runIndexers(
+      repo,
+      { sources: sourceSelection },
+      options.reporter ?? {
+        onResult(result) {
+          logger.info("Bootstrap indexing completed", {
+            source: result.source,
+            processed: result.processed,
+            inserted: result.inserted,
+            updated: result.updated,
+            skipped: result.skipped,
+            durationMs: result.durationMs
+          });
+        }
+      }
+    );
+    if (!options.reporter) {
+      logger.info("Bootstrap indexing summary", { results: bootstrapResults });
+    }
   }
 
   if (options.enableCron ?? process.env.MCP_DOCS_ENABLE_CRON === "true") {

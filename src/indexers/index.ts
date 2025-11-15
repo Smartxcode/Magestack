@@ -5,7 +5,16 @@ import { HyvaIndexer } from "./hyva.js";
 import { SatoshiIndexer } from "./satoshi.js";
 import { logger } from "../utils/logger.js";
 
-export async function runIndexers(repo: DocumentRepository, options: UpdateOptions = {}): Promise<IndexingResult[]> {
+export interface ProgressReporter {
+  onStart?(source: SourceId, description: string): void;
+  onResult?(result: IndexingResult): void;
+}
+
+export async function runIndexers(
+  repo: DocumentRepository,
+  options: UpdateOptions = {},
+  reporter?: ProgressReporter
+): Promise<IndexingResult[]> {
   const enabledSources = options.sources ?? (["mageos", "hyva", "satoshi"] as SourceId[]);
   const instances = [];
 
@@ -22,7 +31,9 @@ export async function runIndexers(repo: DocumentRepository, options: UpdateOptio
   const results: IndexingResult[] = [];
   for (const indexer of instances) {
     logger.info(`Starting indexer ${indexer.id}`, { description: indexer.description });
+    reporter?.onStart?.(indexer.id, indexer.description);
     const result = await indexer.run();
+    reporter?.onResult?.(result);
     results.push(result);
   }
   return results;

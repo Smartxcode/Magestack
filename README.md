@@ -40,6 +40,7 @@ Flags:
 ## MCP Tools
 - Core utilities: `search_docs`, `get_doc`, `docs_status`, `refresh_docs`.
 - 60 topic-specific commands (`hyva_*`, `mageos_*`, `satoshi_*`) aligned with the scenarios from `MCP-Magestack.txt`.
+- Update triggers exposed as MCP commands: `mcp_update_all`, `mcp_update_hyva`, `mcp_update_satoshi`, `mcp_update_mageos`.
 
 ## Project structure
 ```
@@ -116,6 +117,7 @@ Argumenty:
 ## MCP Tools
 - `search_docs`, `get_doc`, `docs_status`, `refresh_docs`
 - 60 tematycznych narzędzi (`hyva_*`, `mageos_*`, `satoshi_*`) odpowiadających sekcjom dokumentacji.
+- Komendy aktualizacji MCP: `mcp_update_all`, `mcp_update_hyva`, `mcp_update_satoshi`, `mcp_update_mageos`.
 
 ## Struktura projektu
 ```
