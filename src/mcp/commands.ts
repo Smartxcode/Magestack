@@ -1,0 +1,70 @@
+export const hyvaCommands = [
+  "hyva_installation_overview",
+  "hyva_installation_steps_clean_magento",
+  "hyva_license_and_download",
+  "hyva_required_dependencies",
+  "hyva_theme_activation_and_configuration",
+  "hyva_build_frontend_assets",
+  "hyva_tailwind_configuration",
+  "hyva_templates_structure",
+  "hyva_components_library_overview",
+  "hyva_add_custom_component",
+  "hyva_javascript_stack",
+  "hyva_styling_best_practices",
+  "hyva_checkout_customization",
+  "hyva_performance_optimization",
+  "hyva_modules_compatibility_matrix",
+  "hyva_translation_and_locale_handling",
+  "hyva_debugging_and_troubleshooting",
+  "hyva_upgrade_guide",
+  "hyva_third_party_integration_patterns",
+  "hyva_full_stack_example_setup"
+] as const;
+
+export const mageosCommands = [
+  "mageos_installation_requirements",
+  "mageos_fresh_installation_steps",
+  "mageos_upgrade_and_patching",
+  "mageos_module_development_basics",
+  "mageos_theme_development_basics",
+  "mageos_dependency_management_composer",
+  "mageos_frontend_stack_overview",
+  "mageos_backend_configuration_important_sections",
+  "mageos_cron_and_indexers_setup",
+  "mageos_cache_layers_explained",
+  "mageos_api_rest_graphql_overview",
+  "mageos_configuration_scopes",
+  "mageos_security_best_practices",
+  "mageos_logging_and_debugging",
+  "mageos_database_schema_and_migrations",
+  "mageos_cli_commands_reference",
+  "mageos_integration_with_varnish_and_redis",
+  "mageos_performance_optimization",
+  "mageos_multistore_setup",
+  "mageos_full_stack_deployment_pattern"
+] as const;
+
+export const satoshiCommands = [
+  "satoshi_overview_and_use_cases",
+  "satoshi_installation_prerequisites",
+  "satoshi_installation_steps",
+  "satoshi_theme_structure",
+  "satoshi_components_catalog",
+  "satoshi_styling_and_design_system",
+  "satoshi_customization_guide",
+  "satoshi_checkout_and_cart_customization",
+  "satoshi_content_blocks_and_cms",
+  "satoshi_performance_considerations",
+  "satoshi_dependencies_and_versioning",
+  "satoshi_demo_layouts_and_presets",
+  "satoshi_navigation_and_header_patterns",
+  "satoshi_product_page_layouts",
+  "satoshi_category_page_layouts",
+  "satoshi_integration_with_marketing_tools",
+  "satoshi_typical_customization_examples",
+  "satoshi_debugging_and_common_issues",
+  "satoshi_upgrade_path",
+  "satoshi_full_stack_example_setup"
+] as const;
+
+export const mcpCommands = [...hyvaCommands, ...mageosCommands, ...satoshiCommands];

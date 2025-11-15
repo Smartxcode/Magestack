@@ -1,0 +1,53 @@
+{
+  "name": "@smartx/mcp-mageos-docs",
+  "version": "1.0.0",
+  "description": "MCP server delivering MageOS, Hyvä Themes and Satoshi Theme documentation with automated crawlers.",
+  "type": "module",
+  "main": "dist/server.js",
+  "bin": {
+    "mcp-mageos-docs": "dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/cli.js",
+    "dev": "tsx src/cli.ts",
+    "lint": "eslint --ext .ts src",
+    "test": "vitest run",
+    "check": "npm run lint && npm run test && npm run build",
+    "update": "tsx src/update.ts"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "mcp",
+    "mageos",
+    "hyva",
+    "satoshi",
+    "docs",
+    "rag"
+  ],
+  "author": "Smartxcode",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.1.0",
+    "cheerio": "^1.0.0",
+    "marked": "^10.0.0",
+    "node-cron": "^3.0.3",
+    "p-limit": "^5.0.0",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/node-cron": "^3.0.11",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "eslint": "^9.0.0",
+    "eslint-config-prettier": "^9.0.0",
+    "prettier": "^3.2.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.6.0",
+    "vitest": "^1.2.0"
+  }
+}
