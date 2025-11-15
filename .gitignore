@@ -5,3 +5,5 @@ data/
 npm-debug.log*
 *.sqlite
 .~lock.*
+AGENTS.md
+MCP-Magestack.txt
