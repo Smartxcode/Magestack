@@ -36,11 +36,35 @@ function parseSources(value?: string): SourceId[] | undefined {
     process.exit(0);
   }
 
-  await startServer({
+  const { transport } = await startServer({
     dbPath,
     updateOnStart,
     enableCron,
     initialSources: sources
+  });
+
+  await new Promise<void>((resolve) => {
+    const cleanup = () => {
+      process.removeListener("SIGINT", handleSignal);
+      process.removeListener("SIGTERM", handleSignal);
+    };
+    const handleSignal = async () => {
+      cleanup();
+      try {
+        await transport.close();
+      } catch (error) {
+        logger.warn("Error while closing transport", { error: (error as Error).message });
+      } finally {
+        resolve();
+      }
+    };
+
+    process.once("SIGINT", handleSignal);
+    process.once("SIGTERM", handleSignal);
+    transport.onclose = () => {
+      cleanup();
+      resolve();
+    };
   });
 })().catch((error) => {
   logger.error("CLI failed", { error: (error as Error).stack });

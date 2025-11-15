@@ -8,7 +8,7 @@
     "mcp-mageos-docs": "dist/cli.js"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && node scripts/copy-assets.mjs",
     "start": "node dist/cli.js",
     "dev": "tsx src/cli.ts",
     "lint": "eslint --ext .ts src",
@@ -30,7 +30,7 @@
   "author": "Smartxcode",
   "license": "MIT",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.1.0",
+    "@modelcontextprotocol/sdk": "^1.22.0",
     "cheerio": "^1.0.0",
     "marked": "^10.0.0",
     "node-cron": "^3.0.3",
