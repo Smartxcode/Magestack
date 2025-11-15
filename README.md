@@ -49,7 +49,8 @@ src/
 ├── server.ts            # STDIO-based MCP server
 ├── config.ts            # runtime configuration
 ├── db/                  # SQLite schema and repository
-├── indexers/            # MageOS/Hyvä/Satoshi crawlers
+├── crawlers/            # generic BFS scraper shared by Hyvä/MageOS/Satoshi
+├── indexers/            # MageOS/Hyvä/Satoshi crawlers (web + GitHub where available)
 ├── mcp/                 # tool/topic registration
 ├── utils/               # http, parsing, hashing, logging
 └── update.ts            # standalone update script
@@ -126,7 +127,8 @@ src/
 ├── server.ts            # uruchamia MCP w STDIO
 ├── config.ts            # konfiguracja źródeł
 ├── db/                  # schema i repozytorium SQLite
-├── indexers/            # crawlerzy MageOS/Hyvä/Satoshi
+├── crawlers/            # współdzielony BFS crawler
+├── indexers/            # crawlerzy MageOS/Hyvä/Satoshi (strony + GitHub tam gdzie trzeba)
 ├── mcp/                 # rejestracja narzędzi, tematy
 ├── utils/               # http, parsery, hash, logger
 └── update.ts            # skrypt aktualizacji

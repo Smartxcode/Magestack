@@ -7,6 +7,7 @@ import { htmlToText } from "../utils/htmlToText.js";
 import { markdownToText } from "../utils/markdownToText.js";
 import { RawDocument } from "../types.js";
 import { logger } from "../utils/logger.js";
+import { crawlSite } from "../crawlers/webCrawler.js";
 
 interface GithubTreeEntry {
   path: string;
@@ -27,22 +28,31 @@ export class SatoshiIndexer extends BaseIndexer {
   }
 
   private async *fetchNotion(): AsyncGenerator<RawDocument> {
-    try {
-      const html = await httpGet(config.satoshi.notionUrl);
-      const $ = load(html);
-      const container = $("[data-root]").length ? $("[data-root]") : $("main");
-      const sections = splitSections(container.html() || "");
-      for (const section of sections) {
-        yield {
-          source: "satoshi",
-          url: config.satoshi.notionUrl + (section.slug ? `#${section.slug}` : ""),
-          title: section.title,
-          content: section.content,
-          lastFetched: new Date()
-        };
+    const { notionUrl, maxPages } = config.satoshi;
+    const host = new URL(notionUrl).host;
+    for await (const page of crawlSite({
+      startUrls: [notionUrl],
+      allowedHost: host,
+      maxPages,
+      minContentLength: 80,
+      transform: ({ url, html }) => {
+        const $ = load(html);
+        const title = ($("h1").first().text().trim() || $("title").text().trim() || url).trim();
+        const main = $("[data-root]").html() ?? $("main").html() ?? html;
+        const content = htmlToText(main ?? html);
+        if (content.length < 80) {
+          return null;
+        }
+        return { url, title, content };
       }
-    } catch (error) {
-      logger.warn("Failed fetching Notion docs", { error: (error as Error).message });
+    })) {
+      yield {
+        source: "satoshi",
+        url: page.url,
+        title: page.title,
+        content: page.content,
+        lastFetched: new Date()
+      };
     }
   }
 
@@ -88,45 +98,6 @@ export class SatoshiIndexer extends BaseIndexer {
       logger.warn("Failed to load Satoshi GitHub tree", { error: (error as Error).message });
     }
   }
-}
-
-function splitSections(html: string): { title: string; content: string; slug: string }[] {
-  const $ = load(html);
-  const blocks: { title: string; content: string; slug: string }[] = [];
-  let currentTitle = "Satoshi Theme";
-  let currentSlug = "overview";
-  let buffer: string[] = [];
-
-  const pushBlock = () => {
-    if (!buffer.length) return;
-    const combined = buffer.join("\n");
-    blocks.push({
-      title: currentTitle,
-      content: htmlToText(combined),
-      slug: currentSlug
-    });
-    buffer = [];
-  };
-
-  $("h1, h2, h3, p, ul, ol, pre").each((_, el) => {
-    const tag = el.tagName?.toLowerCase();
-    if (!tag) return;
-    if (tag.startsWith("h")) {
-      pushBlock();
-      currentTitle = $(el).text().trim() || currentTitle;
-      currentSlug = slugify(currentTitle);
-    }
-    buffer.push($(el).toString());
-  });
-  pushBlock();
-  return blocks;
-}
-
-function slugify(input: string): string {
-  return input
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
 }
 
 function extractTitle(markdown: string, fallback: string): string {
