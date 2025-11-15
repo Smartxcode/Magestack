@@ -1,3 +1,5 @@
+![MageStack overview](magestack.png)
+
 # MCP MageOS Docs Server
 
 Local MCP server that ingests MageOS, Hyvä, and Satoshi documentation, indexes it in SQLite/FTS5, and exposes 60 specialized tools for Claude Desktop, VS Code, and any other MCP-aware host.
@@ -74,7 +76,7 @@ After publishing, configure MCP hosts (e.g., Claude Desktop) as follows:
 }
 ```
 
-########
+################################################################################
 
 Lokalny serwer MCP, który pobiera dokumentację MageOS, Hyvä i Satoshi, indeksuje ją w SQLite/FTS5 i eksponuje 60 narzędzi do natychmiastowego użycia przez hosty MCP (Claude Desktop, VS Code, itp.).
 
